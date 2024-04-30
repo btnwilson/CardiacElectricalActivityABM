@@ -41,10 +41,10 @@ from Cell import Cell
 #%% With tissue class
 v_max = 10
 v_min = 2
-v_threshold = 7
-r_h = 2
-r_v = 2
+v_threshold = 3
+r_h = 1
+r_v = 1
 tissue = t(10,10, 60)
 t.initialize_cardiac_cells(tissue, v_threshold, v_min, v_max, r_h, r_v)
 tissue.insert_pacer_cell(0,4)
-t.simulate_tissue(tissue, 10)
+t.simulate_tissue(tissue, 100000)

@@ -16,7 +16,7 @@ class heart_cell(Cell):
         self.plateau_time = 0 
         self.r_h = r_h
         self.r_v = r_v
-        self.dv_dt = None
+        self.dv_dt = 0
         self.row = row
         self.column = column
         self.v_next = None
@@ -26,7 +26,9 @@ class heart_cell(Cell):
         self.v_threshold = v_threshold
         self.ap_array = np.full((200), 10, dtype=float)
         self.ap_array[0:75] = np.linspace(v_threshold, v_max, 75)
-        self.ap_array[-75:] = np.linspace(v_max, v_threshold, 75)
+        self.ap_array[-75:] = np.linspace(v_max, v_min, 75)
+        self.ap_array = np.append(self.ap_array, np.zeros((200)))
+        self.is_refract = False
 
     def get_voltage(self):
         return self.v_m
@@ -66,10 +68,12 @@ class heart_cell(Cell):
         self.v_m = self.v_next
     
     def simulate_step(self, array_of_cells):
-        if self.v_m > self.v_threshold:
+        if self.v_m >= self.v_threshold and self.ap_int < len(self.ap_array) - 1:
             self.is_diastolic = False
+            
             self.ap_int += 1
-        else:
+      
+        elif self.ap_int > len(self.ap_array) - 1:
             self.is_diastolic = True
             self.ap_int = 0
         self.compute_dv_dt(array_of_cells)

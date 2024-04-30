@@ -23,7 +23,9 @@ class CardiacTissue:
 
     def simulate_tissue(self, num_iterations):
         plt.figure()
-        tissue_plot = plt.imshow(self.voltage, cmap='winter', interpolation='nearest', vmin=0, vmax=10)
+        tissue_plot = plt.imshow(self.voltage, cmap='winter', interpolation='nearest', vmin=0, vmax=6)
+        plt.colorbar()
+        plt.show()
         for step in range(num_iterations):
             for row in range(self.row):
                 for column in range(self.col):
@@ -39,9 +41,9 @@ class CardiacTissue:
                     else:
                         self.voltage[row, column] = curr_cell.get_voltage()
 
-        tissue_plot.set_array(self.voltage)
-        # plt.pause(0.1)
-        plt.show()
+            tissue_plot.set_array(self.voltage)
+            plt.pause(0.001)
+            plt.show()
 
     def insert_pacer_cell(self, row, column):
         self.tissue[row, column] = pc(self.heartrate)
