@@ -6,13 +6,13 @@ Created on Thu Apr 25 13:38:10 2024
 """
 import numpy as np 
 import CardiacTissue as t
+from Cell import Cell
 
-class heart_cell:
+class heart_cell(Cell):
     def __init__(self, v_threshold, v_min, v_max, r_h, r_v, row, column, time_step):
         self.v_m = v_min
         self.v_min = v_min
         self.v_max = v_max
-        # self.t_active = t_activ
         self.plateau_time = 0 
         self.r_h = r_h
         self.r_v = r_v
@@ -27,8 +27,7 @@ class heart_cell:
         self.ap_array = np.full((200), 10, dtype=float)
         self.ap_array[0:75] = np.linspace(v_threshold, v_max, 75)
         self.ap_array[-75:] = np.linspace(v_max, v_threshold, 75)
-        
-        
+
     def get_voltage(self):
         return self.v_m
     

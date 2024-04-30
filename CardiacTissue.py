@@ -1,15 +1,17 @@
 import numpy as np
 from matplotlib import pyplot as plt
 import CardiacCell as c
-
+from Cell import Cell
+from PacerCell import PacerCell as pc
 
 class CardiacTissue:
 
-    def __init__(self, row, col):
+    def __init__(self, row, col, heartrate):
         self.row = row
         self.col = col
-        self.tissue = np.full((row, col), np.nan, dtype=c.heart_cell)
+        self.tissue = np.full((row, col), np.nan, dtype=Cell)
         self.voltage = np.full((row, col), np.nan)
+        self.heartrate = heartrate
 
     def get_tissue(self):
         return self.tissue
@@ -25,14 +27,21 @@ class CardiacTissue:
         for step in range(num_iterations):
             for row in range(self.row):
                 for column in range(self.col):
-                    curr_cell = self.tissue[row][column]
+                    curr_cell = self.tissue[row, column]
                     curr_cell.simulate_step(self.tissue)
 
             for row in range(self.row):
                 for column in range(self.col):
-                    curr_cell = self.tissue[row][column]
-                    curr_cell.update_v_m()
-                    self.voltage[row, column] = curr_cell.get_voltage()
-                    tissue_plot.set_array(self.voltage)
-                    #plt.pause(0.1)
-                    plt.show()
+                    curr_cell = self.tissue[row, column]
+                    if type(curr_cell) == c.heart_cell:
+                        curr_cell.update_v_m()
+                        self.voltage[row, column] = curr_cell.get_voltage()
+                    else:
+                        self.voltage[row, column] = curr_cell.get_voltage()
+
+        tissue_plot.set_array(self.voltage)
+        # plt.pause(0.1)
+        plt.show()
+
+    def insert_pacer_cell(self, row, column):
+        self.tissue[row, column] = pc(self.heartrate)
