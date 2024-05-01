@@ -37,9 +37,15 @@ class CardiacTissue:
                     curr_cell = self.tissue[row, column]
                     if type(curr_cell) == c.heart_cell:
                         curr_cell.update_v_m()
-                        self.voltage[row, column] = curr_cell.get_voltage()
+                        if curr_cell.get_voltage() >= 0:
+                            self.voltage[row, column] = curr_cell.get_voltage()
+                        else:
+                            self.voltage[row, column] = 0
                     else:
-                        self.voltage[row, column] = curr_cell.get_voltage()
+                        if curr_cell.get_voltage() >= 0:
+                            self.voltage[row, column] = curr_cell.get_voltage()
+                        else:
+                            self.voltage[row, column] = 0
 
             tissue_plot.set_array(self.voltage)
             plt.pause(0.001)

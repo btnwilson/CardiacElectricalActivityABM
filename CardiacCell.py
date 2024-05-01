@@ -68,17 +68,21 @@ class heart_cell(Cell):
         self.v_m = self.v_next
     
     def simulate_step(self, array_of_cells):
-        if self.v_m >= self.v_threshold and self.ap_int < len(self.ap_array) - 1:
-            self.is_diastolic = False
+            if self.v_m >= self.v_threshold and self.ap_int < len(self.ap_array) - 1:
+                self.is_diastolic = False
+                self.ap_int += 1
             
-            self.ap_int += 1
-      
-        elif self.ap_int > len(self.ap_array) - 1:
-            self.is_diastolic = True
-            self.ap_int = 0
-        self.compute_dv_dt(array_of_cells)
-        self.update_voltage()
-
+            elif self.ap_int < len(self.ap_array) - 1 and self.ap_int != 0:
+                self.is_diastolic = False
+                self.ap_int += 1
+                
+            else:
+                self.is_diastolic = True
+                self.ap_int = 0
+                self.update_voltage()
+           
+            self.compute_dv_dt(array_of_cells)
+        
 
 
             
