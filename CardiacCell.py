@@ -24,11 +24,13 @@ class heart_cell(Cell):
         self.is_diastolic = True
         self.ap_int = 0
         self.v_threshold = v_threshold
-        self.ap_array = np.full((200), 10, dtype=float)
-        self.ap_array[0:75] = np.linspace(v_threshold, v_max, 75)
-        self.ap_array[-75:] = np.linspace(v_max, v_min, 75)
-        self.ap_array = np.append(self.ap_array, np.zeros((200)))
+        self.length = np.random.randint(150,200)
+        self.ap_array = np.full((self.length), 10, dtype=float)
+        self.ap_array[0:int(self.length * 0.33)] = np.linspace(v_threshold, v_max, int(self.length * 0.33))
+        self.ap_array[-int(self.length * 0.33):] = np.linspace(v_max, v_min, int(self.length * 0.33))
+        self.ap_array = np.append(self.ap_array, np.zeros((100)))
         self.is_refract = False
+        self.is_dead = False
 
     def get_voltage(self):
         return self.v_m
@@ -65,7 +67,10 @@ class heart_cell(Cell):
         self.v_next = self.v_m + self.dv_dt * self.time_step
     
     def update_v_m(self):
-        self.v_m = self.v_next
+        if self.is_dead == True:
+            self.v_m = 0
+        else:
+            self.v_m = self.v_next
     
     def simulate_step(self, array_of_cells):
             if self.v_m >= self.v_threshold and self.ap_int < len(self.ap_array) - 1:
@@ -83,7 +88,8 @@ class heart_cell(Cell):
            
             self.compute_dv_dt(array_of_cells)
         
-
+    def apatosis(self):
+        self.is_dead = True
 
             
     
