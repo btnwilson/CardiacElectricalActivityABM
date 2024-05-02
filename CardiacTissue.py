@@ -13,14 +13,12 @@ class CardiacTissue:
         self.voltage = np.full((row, col), np.nan)
         self.scar = np.full((row, col), np.nan)
     
-    
     def get_tissue(self):
         return self.tissue
 
     def initialize_scar(self):
         for i in range(self.row):
             for j in range(self.col):
-                # if self.tissue[i,j] == c:
                 if self.tissue[i, j].is_dead == True :
                     self.scar[i,j] = 4
                     
@@ -36,8 +34,6 @@ class CardiacTissue:
         tissue_plot = plt.imshow(self.voltage, cmap='magma', interpolation='nearest', vmin=0, vmax=10)
         scar_plot = plt.imshow(self.scar, cmap='binary', interpolation='nearest', vmin=0, vmax=10)
         tbar = plt.colorbar(tissue_plot, label = 'Voltage')
-        # tbar = plt.colorbar(tissue_plot,  ticks = (5,5))
-        # tbar.ax.set_yticklabels(('Voltage'))
         plt.show()
         for step in range(num_iterations):
             for row in range(self.row):
