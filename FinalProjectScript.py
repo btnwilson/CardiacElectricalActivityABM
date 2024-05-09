@@ -4,32 +4,69 @@ Created on Sun Apr 28 15:40:55 2024
 
 @author: bentn
 """
+#%% Import packages
+import numpy as np
+from matplotlib import pyplot as plt
+from CardiacCell import heart_cell
+from CardiacTissue import CardiacTissue as t
+from Cell import Cell
 
-import numpy as np 
-from FinalProjectClasses import heart_cell
-row_size = 10
-column_size = 10 
-object_array = np.full((row_size, column_size), np.nan, dtype= heart_cell)
-
+#%% Initialize variables
 v_max = 10
-v_min = 2
-v_threshold = 7
-r_h = 2
-r_v = 2
+v_min = 0
+v_threshold = 3
+r_h = 1
+r_v = 1
+#%% Tissue with no blockage
 
-for i in range(row_size):
-    for j in range(column_size):
-        object_array[i,j] = heart_cell(v_threshold, v_min, v_max, r_h, r_v, i, j, time_step = .01)
+tissue = t(50,50)
+t.initialize_cardiac_cells(tissue, v_threshold, v_min, v_max, r_h, r_v)
+for i in range(50):
+    tissue.insert_pacer_cell(0,i,20,0)
+t.simulate_tissue(tissue, 1000000,1,'Normal Electrical Activity of the Heart')
 
-ap_array = np.full((200), 10, dtype=float)
-ap_array[0:75] = np.linspace(v_threshold, v_max, 75)
-ap_array[-75:] = np.linspace(v_max, v_threshold, 75)
+#%% Aberrant tissue 
 
-for step in range(10):
-    for row in range(row_size):
-        for column in range(column_size):
-            object_array[row, column].simulate_step(object_array, ap_array)
-            
-    for row in range(row_size):
-        for column in range(column_size):
-            object_array[row, column].update_v_m()
+tissue = t(50,50)
+
+t.initialize_cardiac_cells(tissue, v_threshold, v_min, v_max, r_h, r_v)
+
+for i in range(50):
+    tissue.insert_pacer_cell(0,i,20,0)
+
+for i in range(30):
+    if i not in [15,16, 17]:
+        tissue.kill_cell(25, i)
+for i in range(30):
+    if i not in [16, 17]:
+        tissue.kill_cell(26, i)
+for i in range(30):
+    if i not in [17]:
+        tissue.kill_cell(27, i)
+    
+tissue.tissue[27, 17] = heart_cell(2.1, v_min, v_max, r_h, r_v, 27, 17, .01)
+tissue.tissue[26, 17] = heart_cell(2.1, v_min, v_max, r_h, r_v, 26, 17, .01)
+tissue.tissue[28, 17] = heart_cell(4, v_min, v_max, r_h, r_v, 28, 17, .01)
+tissue.tissue[26, 16] = heart_cell(2.1, v_min, v_max, r_h, r_v, 26, 17, .01)
+
+tissue.initialize_scar()
+t.simulate_tissue(tissue, 1000000,2,'Atrial Fibrillation')
+
+#%% Ablated tissue 
+
+ablated_tissue = t(50,50)
+
+t.initialize_cardiac_cells(ablated_tissue, v_threshold, v_min, v_max, r_h, r_v)
+
+for i in range(50):
+    ablated_tissue.insert_pacer_cell(0,i,20,0)
+
+for i in range(30):
+        ablated_tissue.kill_cell(25, i)
+for i in range(30):
+        ablated_tissue.kill_cell(26, i)
+for i in range(30):
+        ablated_tissue.kill_cell(27, i)
+        
+ablated_tissue.initialize_scar()
+t.simulate_tissue(ablated_tissue, 1000000,3 ,'Ablated Tissue')
